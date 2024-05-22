@@ -108,6 +108,16 @@ class Terreno:
             return []
         return self.poseedores[nombre]
     
+    # Con esta función quien venga a comprar ya sabe qué no puede comprar, pero no de quienes son los terrenos
+    def Ver_Ocupacion(self) -> list:
+        Lista_Terrenos_Comprados = []
+        for _ in self.poseedores.keys(): # De cada poseedor
+            for c in self.poseedores[_]: # extraemos todos sus rectangulos
+                Lista_Terrenos_Comprados.append(c) # y los añadimos a la lista
+                
+        return Lista_Terrenos_Comprados
+    
+    
     # Esto solo es de testeo de cara a Python
     def __str__(self) -> str:
         Dims = "Dimensiones del terreno: (" + str(self.alto) + "," + str(self.largo) + ")."
