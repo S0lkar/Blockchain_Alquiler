@@ -19,10 +19,10 @@ contract VirtualTerrain {
     function setForSale(uint256 x, uint256 y, uint256 price) public {
         require(x < GRID_SIZE && y < GRID_SIZE, "Invalid coordinates");
         require(msg.sender == terrainMap[x][y].owner, "Not the owner");
+        require(price > 0, "Price must be greater than zero"); // Añadido: Validación de precio mayor a cero
         terrainMap[x][y].price = price;
         terrainMap[x][y].forSale = true;
     }
-
 
     // Function to buy a piece of terrain
     function buyTerrain(uint256 x, uint256 y) public payable {
@@ -30,6 +30,7 @@ contract VirtualTerrain {
         Terrain storage terrain = terrainMap[x][y];
         require(terrain.forSale, "Terrain not for sale");
         require(msg.value >= terrain.price, "Insufficient funds");
+        require(msg.sender != terrain.owner, "Owner cannot buy their own terrain"); // Añadido: Verificación de que el dueño actual no puede comprar su propio terreno
 
         address previousOwner = terrain.owner;
         uint256 price = terrain.price;
@@ -39,7 +40,8 @@ contract VirtualTerrain {
         terrain.price = 0;
 
         // Transfer the funds to the previous owner
-        payable(previousOwner).transfer(price);
+        (bool success, ) = previousOwner.call{value: price}(""); // Modificado: Uso de `call` para mayor flexibilidad y verificación de éxito
+        require(success, "Transfer failed");
 
         emit TerrainBought(msg.sender, x, y, price);
     }
@@ -51,7 +53,6 @@ contract VirtualTerrain {
 
         terrainMap[x][y].owner = msg.sender;
     }
-
 
     // Function to get the details of a piece of terrain
     function getTerrainDetails(uint256 x, uint256 y) public view returns (address, uint256, bool) {
