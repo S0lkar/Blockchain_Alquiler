@@ -75,7 +75,6 @@ contract VirtualLand2 is ERC721, Ownable {
         return (xs, ys, widths, heights, owners, tokenIds);
     }
 
-
     function transferLand(uint256 tokenId, address newOwner) public {
         require(msg.sender == ownerOf(tokenId), "Only land owner can transfer the land");
         require(newOwner != address(0), "New owner cannot be the zero address");
@@ -86,7 +85,5 @@ contract VirtualLand2 is ERC721, Ownable {
         // Transfer the token using ERC721's transfer function
         _transfer(msg.sender, newOwner, tokenId);
     }
-
-
     
 }
